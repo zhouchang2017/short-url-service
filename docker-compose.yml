@@ -1,0 +1,32 @@
+version: '3.1'
+
+services:
+
+  db:
+    restart: always
+    image: mysql
+    container_name: mysql_host
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: docker
+      MYSQL_PASSWORD: docker
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - ./docker/db/data:/var/lib/mysql
+    ports:
+      - 13306:3306
+
+  t.wewee:
+    image: zhouchang2018/shor-url-service
+    ports:
+      - 8000:8000
+    environment:
+      DB_USERNAME: "root"
+      DB_PASSWORD: "root"
+      DB_HOST: mysql_host
+      DB_PORT: "3306"
+      DB_NAME: "short_url"
+    depends_on:
+      - db
+    links:
+      - db
