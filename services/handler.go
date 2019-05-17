@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"github.com/jinzhu/gorm"
 	"log"
+	"net/http"
+	"regexp"
 	"strings"
 	"t.wewee/models"
 )
@@ -24,6 +26,7 @@ type ShortUrlHandler interface {
 	Make(url string) (shortUrl *models.ShortUrl, err error)
 	ResolveShort(query string) (shortUrl *models.ShortUrl, err error)
 	IncrementCount(model *models.ShortUrl)
+	StoreVisitor(model *models.ShortUrl, r *http.Request) (err error)
 }
 
 func NewShortUrl(db *gorm.DB) *shortUrl {
@@ -63,7 +66,16 @@ func (this *shortUrl) decode(key string) (int64, error) {
 	return n, nil
 }
 
+var regUrl = regexp.MustCompile(`^((ht|f)tps?):\/\/([\w\-]+(\.[\w\-]+)*\/)*[\w\-]+(\.[\w\-]+)*\/?(\?([\w\-\.,@?^=%&:\/~\+#]*)+)?`)
+
+func isUrl(url string) bool {
+	return regUrl.MatchString(url)
+}
+
 func (this *shortUrl) Make(url string) (shortUrl *models.ShortUrl, err error) {
+	if !isUrl(url) {
+		return nil, fmt.Errorf("%s,不是有效的url", url)
+	}
 
 	// hash code
 	urlMd5 := fmt.Sprintf("%x", md5.Sum([]byte(url)))
@@ -91,6 +103,38 @@ func (this *shortUrl) ResolveShort(query string) (shortUrl *models.ShortUrl, err
 	first := this.db.First(&shortUrl, id)
 
 	return shortUrl, first.Error
+}
+
+func (this *shortUrl) StoreVisitor(model *models.ShortUrl, r *http.Request) (err error) {
+
+	ip := this.getClientIp(r)
+
+	log.Printf("%s\n", r.Header)
+
+	visitor := &models.Visitor{
+		ShortUrl:  model.ShortUrl,
+		OriginUrl: model.OriginUrl,
+		Ip:        ip,
+		Referer:   r.Referer(),
+		UserAgent: r.Header.Get("User-Agent"),
+	}
+
+	created := this.db.Create(&visitor)
+
+	return created.Error
+}
+
+func (this *shortUrl) getClientIp(r *http.Request) string {
+	ip := r.Header.Get("X-Forwarded-For")
+	if strings.Contains(ip, "127.0.0.1") || ip == "" {
+		ip = r.Header.Get("X-Real-IP")
+	}
+
+	if ip == "" {
+		return "127.0.0.1"
+	}
+
+	return ip
 }
 
 func (this *shortUrl) generateShortUrl(url string, hashcode string) (shortUrl *models.ShortUrl, err error) {

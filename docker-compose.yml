@@ -28,5 +28,4 @@ services:
       DB_NAME: "short_url"
     depends_on:
       - db
-    links:
-      - db
+    entrypoint: /app/entrypoint.sh -d db:3306 -c 'echo "start web service here"';

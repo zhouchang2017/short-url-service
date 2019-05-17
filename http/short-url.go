@@ -38,9 +38,12 @@ func Redirect(handler services.ShortUrlHandler) func(w http.ResponseWriter, r *h
 		shortUrl, err := handler.ResolveShort(code)
 
 		if err != nil {
-			log.Printf("解析链接错误 %s", err.Error())
+			log.Printf("解析链接不存在 %s", err.Error())
 			http.Redirect(w, r, wewee, http.StatusMovedPermanently)
+			return
 		}
+
+		handler.StoreVisitor(shortUrl,r)
 
 		handler.IncrementCount(shortUrl)
 
@@ -65,7 +68,7 @@ func Make(handler services.ShortUrlHandler) func(w http.ResponseWriter, r *http.
 			return
 		}
 
-		// TODO验证url有效性
+
 		shortUrl, err := handler.Make(originUrl)
 
 		if err != nil {

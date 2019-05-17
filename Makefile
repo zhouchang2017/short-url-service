@@ -12,4 +12,4 @@ build:
 
 
 run:
-	docker run -p 8000:8000 -e DB_USERNAME=root -e DB_PASSWORD=12345678 -e DB_HOST=127.0.0.1 -e DB_PORT=3306 -e DB_NAME=micro_book_mall t.wewee
+	docker run -p 8000:8000 -e DB_USERNAME=root -e DB_PASSWORD=12345678 -e DB_HOST=127.0.0.1 -e DB_PORT=3306 -e DB_NAME=micro_book_mall zhouchang2018/shor-url-service

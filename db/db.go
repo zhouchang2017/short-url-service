@@ -10,14 +10,17 @@ import (
 
 var db *gorm.DB
 
+var local = "Local"
+
 func Init() {
 	var err error
-	db, err = gorm.Open("mysql", fmt.Sprintf("%s:%s@(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+	db, err = gorm.Open("mysql", fmt.Sprintf("%s:%s@(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=%s",
 		os.Getenv("DB_USERNAME"),
 		os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_HOST"),
 		os.Getenv("DB_PORT"),
 		os.Getenv("DB_NAME"),
+		local,
 	))
 
 	if err != nil {
@@ -33,6 +36,9 @@ func Init() {
 
 	if !db.HasTable(&models.ShortUrl{}) {
 		db.AutoMigrate(&models.ShortUrl{}).Exec("alter table short_urls AUTO_INCREMENT=10000")
+	}
+	if !db.HasTable(&models.Visitor{}) {
+		db.AutoMigrate(&models.Visitor{})
 	}
 }
 

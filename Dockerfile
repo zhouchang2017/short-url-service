@@ -11,6 +11,9 @@ WORKDIR /app
 # 将微服务的服务端可运行文件拷贝到 /app 下
 ADD t.wewee /app/t.wewee
 ADD client/public /app/client/public
+ADD entrypoint.sh /app/entrypoint.sh
+
+RUN chmod 777 /app/entrypoint.sh
 
 # 运行服务端
 CMD ["./t.wewee"]

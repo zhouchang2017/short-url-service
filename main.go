@@ -20,6 +20,8 @@ func main() {
 	db.Init()
 	defer db.Close()
 
+
+
 	handler := services.NewShortUrl(db.DB())
 
 	var wait time.Duration
@@ -28,7 +30,7 @@ func main() {
 
 	r := mux.NewRouter()
 
-	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(dir))))
+
 
 	r.HandleFunc("/",app.Index(handler))
 
@@ -38,6 +40,7 @@ func main() {
 
 	api.Path("/short-urls").Methods(http.MethodPost).HandlerFunc(app.Make(handler))
 
+	r.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(dir))))
 	srv := &http.Server{
 		Addr: ":8000",
 		// Good practice to set timeouts to avoid Slowloris attacks.
