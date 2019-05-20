@@ -26,6 +26,7 @@ services:
       DB_HOST: mysql_host
       DB_PORT: "3306"
       DB_NAME: "short_url"
+    volumes:
+      - ./docker/app/logs:/app/logs
     depends_on:
       - db
-    entrypoint: /app/entrypoint.sh -d db:3306 -c 'echo "start web service here"';

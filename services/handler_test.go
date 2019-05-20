@@ -10,7 +10,7 @@ func TestRegUrl(t *testing.T) {
 		"https://tailwindcss.com/docs/installation/": true,
 		"fdakfasf":        false,
 		"21312fda":        false,
-		"http://fdasfasf": true,
+		"web://fdasfasf": true,
 	}
 
 	for url, res := range urls {

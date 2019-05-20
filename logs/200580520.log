@@ -1,0 +1,8 @@
+Now listening on: http://localhost:8000
+Application started. Press CMD+C to shut down.
+[INFO] 2019/05/20 16:21 200 460.254µs ::1 GET /
+[INFO] 2019/05/20 16:21 200 3.907737ms ::1 GET /js/app.js
+[INFO] 2019/05/20 16:21 200 87.101µs ::1 GET /css/app.css
+[INFO] 2019/05/20 16:21 200 644.343µs ::1 GET /img/logo.png
+[INFO] 2019/05/20 16:21 200 26.015µs ::1 GET /favicon.ico
+[ERRO] 2019/05/20 16:44 http: Server closed

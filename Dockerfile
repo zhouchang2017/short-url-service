@@ -12,7 +12,7 @@ WORKDIR /app
 ADD t.wewee /app/t.wewee
 ADD client/public /app/client/public
 ADD entrypoint.sh /app/entrypoint.sh
-
+ADD logs /app/logs
 RUN chmod 777 /app/entrypoint.sh
 
 # 运行服务端

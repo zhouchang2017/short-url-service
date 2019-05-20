@@ -26,7 +26,7 @@ type ShortUrlHandler interface {
 	Make(url string) (shortUrl *models.ShortUrl, err error)
 	ResolveShort(query string) (shortUrl *models.ShortUrl, err error)
 	IncrementCount(model *models.ShortUrl)
-	StoreVisitor(model *models.ShortUrl, r *http.Request) (err error)
+	StoreVisitor(model *models.Visitor) (err error)
 }
 
 func NewShortUrl(db *gorm.DB) *shortUrl {
@@ -105,21 +105,9 @@ func (this *shortUrl) ResolveShort(query string) (shortUrl *models.ShortUrl, err
 	return shortUrl, first.Error
 }
 
-func (this *shortUrl) StoreVisitor(model *models.ShortUrl, r *http.Request) (err error) {
+func (this *shortUrl) StoreVisitor(model *models.Visitor) (err error) {
 
-	ip := this.getClientIp(r)
-
-	log.Printf("%s\n", r.Header)
-
-	visitor := &models.Visitor{
-		ShortUrl:  model.ShortUrl,
-		OriginUrl: model.OriginUrl,
-		Ip:        ip,
-		Referer:   r.Referer(),
-		UserAgent: r.Header.Get("User-Agent"),
-	}
-
-	created := this.db.Create(&visitor)
+	created := this.db.Create(&model)
 
 	return created.Error
 }
